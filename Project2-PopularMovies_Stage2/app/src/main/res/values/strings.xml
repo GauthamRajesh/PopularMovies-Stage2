@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Popular Movies, Stage 2</string>
+    <string name="error_message">An error occurred. Please check your network and reload the app.</string>
+    <string name="LOG_TAG">MainActivity</string>
+    <string name="api_key">3012b6f58e807c169f572538fd361422</string>
+    <string name="no_connection">No internet connection</string>
+    <string name="title_label_text">Title:</string>
+    <string name="title_placeholder">title</string>
+    <string name="date_placeholder">date</string>
+    <string name="release_date_label_text">Release Date:</string>
+    <string name="vote_average_label_text">Vote Average:</string>
+    <string name="vote_placeholder">average</string>
+    <string name="synopsis_label_text">Synopsis:</string>
+    <string name="synopsis_placeholder">synopsis</string>
+    <string name="most_popular">Most Popular</string>
+    <string name="best_rated">Best Rated</string>
+    <string name="trailer_label">Trailer:</string>
+    <string name="base_youtube_url">https://youtube.com/watch?v=</string>
+    <string name="go_to_trailer">Go to Trailer</string>
+    <string name="review_label">Review:</string>
+    <string name="no_reviews">No reviews available.</string>
+    <string name="go_to_review">Go to Review</string>
+    <string name="favorite_this_movie">Favorite this Movie</string>
+    <string name="favorites_failure">An error has occurred in saving this movie.</string>
+    <string name="failure_success">Successfully saved to favorites.</string>
+    <string name="favorites_prompt">Go to Favorites</string>
+    <string name="favs_screen">Go to Favorites</string>
+    <string name="no_favs">No movies saved to favorites.</string>
+</resources>
