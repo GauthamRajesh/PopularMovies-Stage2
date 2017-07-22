@@ -14,8 +14,9 @@
         android:theme="@style/AppTheme">
         <provider
             android:name=".Data.MovieProvider"
-            android:authorities="application.example.com.popularmoviesstage2"
+            android:authorities="com.example.android.popularmoviesstage2"
             android:exported="false" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,7 +25,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".MovieDetail" />
-        <activity android:name=".FavoritesActivity"></activity>
+        <activity android:name=".FavoritesActivity" />
     </application>
 
 </manifest>

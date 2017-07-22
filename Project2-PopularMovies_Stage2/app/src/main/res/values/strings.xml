@@ -26,4 +26,6 @@
     <string name="favorites_prompt">Go to Favorites</string>
     <string name="favs_screen">Go to Favorites</string>
     <string name="no_favs">No movies saved to favorites.</string>
+    <string name="not_favorited">Not favorited.</string>
+    <string name="already_favorited">Already favorited!</string>
 </resources>

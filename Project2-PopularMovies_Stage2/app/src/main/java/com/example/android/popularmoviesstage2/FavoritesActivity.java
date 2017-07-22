@@ -55,7 +55,8 @@ public class FavoritesActivity extends AppCompatActivity implements LoaderManage
                 favoriteMovies.add(new Movie(id, title, posterPath, overview, Double.toString(rating), date));
             }
         }
-        MovieAdapter favsAdapter = new MovieAdapter(this, favoriteMovies);
+        data.close();
+        MovieAdapter favsAdapter = new MovieAdapter(this, favoriteMovies, getString(R.string.already_favorited));
         favoritesView.setAdapter(favsAdapter);
     }
     @Override

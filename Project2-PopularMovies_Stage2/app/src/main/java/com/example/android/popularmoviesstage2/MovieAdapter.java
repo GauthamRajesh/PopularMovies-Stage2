@@ -17,10 +17,18 @@ import java.util.List;
 public class MovieAdapter extends ArrayAdapter<Movie> {
     private List<Movie> mMovies;
     private Context mContext;
-    public MovieAdapter(Context context, List<Movie> movies) {
+    private  String mfavString;
+    // String... favString is supposed to be used if you want the activity to have the text saying the movie is favorited
+    public MovieAdapter(Context context, List<Movie> movies, String... favString) {
         super(context, 0, movies);
         mMovies = movies;
         mContext = context;
+        if(favString.length > 0) {
+            mfavString = favString[0];
+        }
+        else {
+            mfavString = getContext().getString(R.string.not_favorited);
+        }
     }
     @Override
     @NonNull
@@ -45,6 +53,7 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
                 strings.putString("vote_avg", movie.getVoteAverage());
                 strings.putString("release_date", movie.getReleaseDate());
                 strings.putString("id", movie.getID());
+                strings.putString("Fav_string", mfavString);
                 i.putExtras(strings);
                 mContext.startActivity(i);
             }

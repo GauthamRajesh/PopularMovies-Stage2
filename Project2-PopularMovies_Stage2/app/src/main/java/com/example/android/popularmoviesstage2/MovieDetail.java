@@ -3,6 +3,7 @@ package com.example.android.popularmoviesstage2;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -35,6 +36,8 @@ public class MovieDetail extends AppCompatActivity {
     String synopsis = "";
     String releaseDate = "";
     String id = "";
+    TextView favoritedTextView;
+    String favsString;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,15 +49,18 @@ public class MovieDetail extends AppCompatActivity {
         synopsis = i.getStringExtra("synopsis");
         releaseDate = i.getStringExtra("release_date");
         id = i.getStringExtra("id");
+        favsString = i.getStringExtra("Fav_string");
         TextView titleTextView = (TextView) findViewById(R.id.title);
         TextView voteTextView = (TextView) findViewById(R.id.vote_average);
         TextView synopsisTextView = (TextView) findViewById(R.id.synopsis);
         TextView dateTextView = (TextView) findViewById(R.id.date);
+        favoritedTextView = (TextView) findViewById(R.id.isFavorited);
         ImageView posterView = (ImageView) findViewById(R.id.movie_poster);
         titleTextView.setText(title);
         voteTextView.setText(voteAvg);
         synopsisTextView.setText(synopsis);
         dateTextView.setText(releaseDate);
+        favoritedTextView.setText(favsString);
         String baseURL = "http://image.tmdb.org/t/p/w185";
         Picasso.with(this).load(baseURL + posterPath).into(posterView);
         if(isConnected(this)) {
@@ -169,6 +175,9 @@ public class MovieDetail extends AppCompatActivity {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(reviewUrl)));
             }
             case R.id.favorite: {
+                if(isAlreadyFavorited(title)) {
+                    break;
+                }
                 ContentValues cv = new ContentValues();
                 cv.put(MovieContract.MovieEntry.COLUMN_MOVIE_NAME, title);
                 cv.put(MovieContract.MovieEntry.COLUMN_MOVIE_OVERVIEW, synopsis);
@@ -177,6 +186,7 @@ public class MovieDetail extends AppCompatActivity {
                 cv.put(MovieContract.MovieEntry.COLUMN_MOVIE_DATE, releaseDate);
                 cv.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, id);
                 Uri uri = getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, cv);
+                favoritedTextView.setText(R.string.already_favorited);
                 if(uri == null) {
                     Toast.makeText(this, R.string.favorites_failure, Toast.LENGTH_LONG).show();
                 }
@@ -196,5 +206,17 @@ public class MovieDetail extends AppCompatActivity {
         }
         JSONObject review = moviesJsonArray.getJSONObject(0);
         return review.getString("url");
+    }
+    public boolean isAlreadyFavorited(String title) {
+        Cursor favoritesCursor = getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, null, null, null, null);
+        if(favoritesCursor != null && favoritesCursor.moveToNext()) {
+            String favoritesTitle = favoritesCursor.getString(favoritesCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_NAME));
+            if(title.equals(favoritesTitle)) {
+                return true;
+            }
+        }
+        assert favoritesCursor != null;
+        favoritesCursor.close();
+        return false;
     }
 }
