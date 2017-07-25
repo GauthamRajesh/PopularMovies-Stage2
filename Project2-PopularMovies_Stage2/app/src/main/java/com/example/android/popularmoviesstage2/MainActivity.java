@@ -26,22 +26,34 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     MovieAdapter movieAdapter;
     GridView gv;
+    ArrayList<Movie> allMovies;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        gv = (GridView) findViewById(R.id.gvMovies);
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
         String baseUrl = "http://api.themoviedb.org/3/movie/popular";
+        allMovies = new ArrayList<>();
+        if(savedInstanceState != null && savedInstanceState.getParcelableArrayList("movies") != null) {
+            allMovies = savedInstanceState.getParcelableArrayList("movies");
+            gv.setAdapter(new MovieAdapter(this, allMovies));
+        }
         if(isConnected) {
             new MovieTask().execute(baseUrl);
         }
         else {
             Toast.makeText(this, R.string.no_connection, Toast.LENGTH_LONG).show();
         }
+    }
+    @Override
+    protected void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+        state.putParcelableArrayList("movies", allMovies);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -92,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Movie[] movies) {
             if (movies != null) {
-                ArrayList<Movie> allMovies = new ArrayList<>();
                 for (int i = 0; i < movies.length; i++) {
                     allMovies.add(movies[i]);
                 }
@@ -102,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
     private Movie[] getMovieData(String jsonString) throws JSONException {
         final String results_json = "results";
         final String id_json = "id";
@@ -132,7 +142,11 @@ public class MainActivity extends AppCompatActivity {
             }
             return movies;
         } else {
-            Toast.makeText(getApplicationContext(), "No Network Connection", Toast.LENGTH_LONG).show();
+            MainActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(getApplicationContext(), "No Network Connection", Toast.LENGTH_LONG).show();
+                }
+            });
             return null;
         }
     }

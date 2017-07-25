@@ -175,7 +175,7 @@ public class MovieDetail extends AppCompatActivity {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(reviewUrl)));
             }
             case R.id.favorite: {
-                if(isAlreadyFavorited(title)) {
+                if(isAlreadyFavorited(id)) {
                     break;
                 }
                 ContentValues cv = new ContentValues();
@@ -185,6 +185,7 @@ public class MovieDetail extends AppCompatActivity {
                 cv.put(MovieContract.MovieEntry.COLUMN_MOVIE_IMAGE, posterPath);
                 cv.put(MovieContract.MovieEntry.COLUMN_MOVIE_DATE, releaseDate);
                 cv.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, id);
+                cv.put(MovieContract.MovieEntry.COLUMN_FAVORITE_MOVIE, getString(R.string.already_favorited));
                 Uri uri = getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, cv);
                 favoritedTextView.setText(R.string.already_favorited);
                 if(uri == null) {
@@ -207,11 +208,12 @@ public class MovieDetail extends AppCompatActivity {
         JSONObject review = moviesJsonArray.getJSONObject(0);
         return review.getString("url");
     }
-    public boolean isAlreadyFavorited(String title) {
-        Cursor favoritesCursor = getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, null, null, null, null);
+    public boolean isAlreadyFavorited(String id) {
+        Cursor favoritesCursor = getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, new String[] {MovieContract.MovieEntry.COLUMN_FAVORITE_MOVIE}, "Movie_id=" + id, null, null);
         if(favoritesCursor != null && favoritesCursor.moveToNext()) {
-            String favoritesTitle = favoritesCursor.getString(favoritesCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_NAME));
-            if(title.equals(favoritesTitle)) {
+            String favorited = favoritesCursor.getString(favoritesCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_FAVORITE_MOVIE));
+            if(favorited.equals(getString(R.string.already_favorited))) {
+                favoritesCursor.close();
                 return true;
             }
         }

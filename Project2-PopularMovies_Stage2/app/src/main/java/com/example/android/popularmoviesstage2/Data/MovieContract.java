@@ -30,6 +30,7 @@ public class MovieContract {
         public static final String COLUMN_MOVIE_DATE = "Date";
         public static final String COLUMN_MOVIE_IMAGE = "Image";
         public static final String COLUMN_MOVIE_ID = "Movie_id";
+        public static final String COLUMN_FAVORITE_MOVIE = "Favorited";
 
     }
 }

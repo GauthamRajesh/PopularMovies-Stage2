@@ -18,12 +18,14 @@ public class FavoritesActivity extends AppCompatActivity implements LoaderManage
     public static final int LOADER_ID = 30;
     private ArrayList<Movie> favoriteMovies;
     private GridView favoritesView;
+    private String favorited;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorites);
         favoriteMovies = new ArrayList<>();
         favoritesView = (GridView) findViewById(R.id.favorites_gridview);
+        favorited = "";
         getSupportLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
@@ -52,11 +54,12 @@ public class FavoritesActivity extends AppCompatActivity implements LoaderManage
                 double rating = data.getDouble(data.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_RATING));
                 String overview = data.getString(data.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_OVERVIEW));
                 String date = data.getString(data.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_DATE));
+                favorited = data.getString(data.getColumnIndex(MovieContract.MovieEntry.COLUMN_FAVORITE_MOVIE));
                 favoriteMovies.add(new Movie(id, title, posterPath, overview, Double.toString(rating), date));
             }
         }
         data.close();
-        MovieAdapter favsAdapter = new MovieAdapter(this, favoriteMovies, getString(R.string.already_favorited));
+        MovieAdapter favsAdapter = new MovieAdapter(this, favoriteMovies, favorited);
         favoritesView.setAdapter(favsAdapter);
     }
     @Override
