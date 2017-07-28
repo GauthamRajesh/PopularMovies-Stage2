@@ -27,21 +27,25 @@ public class MainActivity extends AppCompatActivity {
     MovieAdapter movieAdapter;
     GridView gv;
     ArrayList<Movie> allMovies;
+    int mScrollPosition = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         gv = (GridView) findViewById(R.id.gvMovies);
+        allMovies = new ArrayList<>();
+        movieAdapter = new MovieAdapter(this, allMovies);
+        gv.setAdapter(movieAdapter);
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
         String baseUrl = "http://api.themoviedb.org/3/movie/popular";
-        allMovies = new ArrayList<>();
         if(savedInstanceState != null && savedInstanceState.getParcelableArrayList("movies") != null) {
             allMovies = savedInstanceState.getParcelableArrayList("movies");
-            gv.setAdapter(new MovieAdapter(this, allMovies));
+            mScrollPosition = savedInstanceState.getInt("scroll_pos");
+            gv.smoothScrollToPosition(mScrollPosition);
         }
         if(isConnected) {
             new MovieTask().execute(baseUrl);
@@ -54,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
         state.putParcelableArrayList("movies", allMovies);
+        state.putInt("scroll_pos", gv.getFirstVisiblePosition());
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -107,9 +112,11 @@ public class MainActivity extends AppCompatActivity {
                 for (int i = 0; i < movies.length; i++) {
                     allMovies.add(movies[i]);
                 }
-                movieAdapter = new MovieAdapter(MainActivity.this, allMovies);
+                movieAdapter.clear();
+                movieAdapter.addAll(allMovies);
                 gv = (GridView) findViewById(R.id.gvMovies);
                 gv.setAdapter(movieAdapter);
+                gv.setVerticalScrollbarPosition(mScrollPosition);
             }
         }
     }
