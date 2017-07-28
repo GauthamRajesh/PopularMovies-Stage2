@@ -42,23 +42,23 @@ public class MainActivity extends AppCompatActivity {
         boolean isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
         String baseUrl = "http://api.themoviedb.org/3/movie/popular";
-        if(savedInstanceState != null && savedInstanceState.getParcelableArrayList("movies") != null) {
-            allMovies = savedInstanceState.getParcelableArrayList("movies");
-            mScrollPosition = savedInstanceState.getInt("scroll_pos");
-            gv.smoothScrollToPosition(mScrollPosition);
-        }
         if(isConnected) {
             new MovieTask().execute(baseUrl);
         }
         else {
             Toast.makeText(this, R.string.no_connection, Toast.LENGTH_LONG).show();
         }
+        if(savedInstanceState != null && savedInstanceState.getParcelableArrayList("movies") != null) {
+            allMovies = savedInstanceState.getParcelableArrayList("movies");
+            mScrollPosition = savedInstanceState.getInt("scroll_pos");
+        }
     }
     @Override
     protected void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
+        int pos = gv.getFirstVisiblePosition();
         state.putParcelableArrayList("movies", allMovies);
-        state.putInt("scroll_pos", gv.getFirstVisiblePosition());
+        state.putInt("scroll_pos", pos);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
                     allMovies.add(movies[i]);
                 }
                 movieAdapter.clear();
-                movieAdapter.addAll(allMovies);
+                movieAdapter.addAll(movies);
                 gv = (GridView) findViewById(R.id.gvMovies);
                 gv.setAdapter(movieAdapter);
                 gv.setVerticalScrollbarPosition(mScrollPosition);
@@ -158,4 +158,3 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
-
